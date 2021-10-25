@@ -110,20 +110,23 @@ function App() {
     }
 
     for(let metaId in metadata) {
+      let metaTemp:any = [];
       const meta = metadata[metaId];
       let uri = await getURI(meta);
       if(!uri.name) {
         continue;
       }
-      meta["name"] = uri.name;
-      meta["url"] = uri.image;
-    
+      metaTemp["name"] = uri.name;
+      metaTemp["mint"] = meta.mint;
+      metaTemp["url"] = uri.image;
+      metaTemp["royalty"] = meta.data.sellerFeeBasisPoints / 100;
+      metaTemp["updateAuthority"] = meta.updateAuthority;
       if(uri.hasOwnProperty("collection")) {
-        meta["collection"] = uri.collection.name;
+        metaTemp["collection"] = uri.collection.name;
       } else if(uri.name.indexOf("#")>-1) {
-        meta["collection"] = uri.name.split("#")[0];
+        metaTemp["collection"] = uri.name.split("#")[0];
       } else {
-        meta["collection"] = "Single";
+        metaTemp["collection"] = "Single";
       }
 
       let price = 0;
@@ -156,14 +159,14 @@ function App() {
             }
           }
       })
-      meta["price"] = parseFloat(price.toPrecision(3));
+      metaTemp["price"] = parseFloat(price.toPrecision(3));
 
-      newData.push(meta);
+      newData.push(metaTemp);
       const arr:any = [...newData];
       setData(arr);
     }
 
-    const newMetadata = metadata.filter((value:any, index:Number, arr:any) => {
+    const newMetadata = newData.filter((value:any, index:Number, arr:any) => {
       return value.hasOwnProperty("url");
     });
     return newMetadata;

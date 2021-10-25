@@ -1,3 +1,20 @@
 tablebody {
     position: relative;
 }
+
+.tableHeader:hover {
+    cursor: pointer;
+}
+
+.icon {
+    margin-left: 5px;
+    position: absolute;
+}
+
+.icon.before {
+    display: none;
+}
+
+.icon.sort {
+    display: inline-block;
+}

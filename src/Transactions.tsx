@@ -8,17 +8,16 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
-// import GetAccountNFT from "./get-account-nfts/getAccountNFTs";
 import SearchBar from "material-ui-search-bar";
 import "./Transaction.css";
 
 import Spinner from './components/spinner';
 import { height } from "@mui/system";
-// import { trackPromise } from 'react-promise-tracker';
+import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
+import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 
 interface Column {
-  id: "name" | "img" | "mint" | "sellerFeeBasisPoints" | "collection" | "price" | "updateAuthority";
-  //   id: "updateAuthority" ;
+  id: "name" | "url" | "mint" | "royalty" | "collection" | "price" | "updateAuthority";
   label: string;
   minWidth?: number;
   align?: "right";
@@ -26,10 +25,10 @@ interface Column {
 }
 const columns: readonly Column[] = [
   { id: "name", label: "Name", minWidth: 150 },
-  { id: "img", label: "Image"},
+  { id: "url", label: "Image"},
   { id: "mint", label: "Mint", minWidth: 100 },
   {
-    id: "sellerFeeBasisPoints",
+    id: "royalty",
     label: "Royalty",
     minWidth: 100,
     format: (value: number) => value.toLocaleString("en-US"),
@@ -46,18 +45,19 @@ const columns: readonly Column[] = [
   
 export default function Transactions(props:any) {
   const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(10);
-  // const [url, setURL] = React.useState("");
-  // const [rows, setRows] = React.useState<any>();
-  const rows = props.rows;
-
+  const [rowsPerPage, setRowsPerPage] = React.useState(25);
+  const [sortId, setSortId] = React.useState("");
   const [filterRows, setFilterRows] = React.useState<any>();
+  const [sortDirection, setSortDirection] = React.useState(-1);
+  const rows = props.rows;
 
   const [searched, setSearched] = React.useState<string>("");
   const requestSearch = (searchedVal: string) => {
     const filteredRows = rows.filter((row:any) => {
-      return row.data.name.toLowerCase().includes(searchedVal.toLowerCase())
+      return row.name.toLowerCase().includes(searchedVal.toLowerCase())
         || row.mint.toLowerCase().includes(searchedVal.toLowerCase())
+        || row.collection.toLowerCase().includes(searchedVal.toLowerCase())
+        || row.updateAuthority.toLowerCase().includes(searchedVal.toLowerCase())
     });
     setFilterRows(filteredRows);
   };
@@ -70,6 +70,38 @@ export default function Transactions(props:any) {
   const search = (searchVal:any) => {
     setSearched(searchVal);
     requestSearch(searchVal);
+  }
+
+  const sortHandler = (e:any) => {
+    let id = e.target.getAttribute("id");
+    let sortedRows = filterRows;
+    console.log(sortDirection);
+    if(id === sortId) {
+      setSortDirection(-1 * sortDirection);
+      sortedRows.reverse();
+    } else {
+      setSortDirection(-1);
+      if(typeof(rows[0][id]) === "number") {
+        sortedRows.sort(function (a:any, b:any) {
+          return a[id] - b[id];
+        });
+      } else {
+        sortedRows.sort(function (a:any, b:any) {
+          let nameA = a[id].toUpperCase(); 
+          let nameB = b[id].toUpperCase(); 
+          if (nameA < nameB) {
+            return -1;
+          }
+          if (nameA > nameB) {
+            return 1;
+          }
+          return 0;
+        });
+      }
+    }
+    setSortId(id);
+    const arr:any = [...sortedRows];
+    setFilterRows(arr);                                  
   }
 
   useEffect(() => {
@@ -99,11 +131,19 @@ export default function Transactions(props:any) {
               <TableRow>
                 {columns.map((column) => (
                   <TableCell
-                    key={column.id}
+                    id={column.id}
                     align={column.align}
-                    style={{ minWidth: column.minWidth }}
+                    style={{ minWidth: column.minWidth}}
+                    onClick={sortHandler}
+                    className="tableHeader"
                   >
                     {column.label}
+                    <ArrowUpwardIcon 
+                      className={column.id == sortId && sortDirection == -1 ? "icon sort" : "icon before"} 
+                    />
+                    <ArrowDownwardIcon 
+                      className={column.id == sortId && sortDirection == 1 ? "icon sort" : "icon before"} 
+                    />
                   </TableCell>
                 ))}
               </TableRow>
@@ -117,13 +157,13 @@ export default function Transactions(props:any) {
                     let value:any;
                     return (
                       <TableRow hover role="checkbox" tabIndex={-1} key={index}>
-                        <TableCell key="name">{row.name}</TableCell>
-                        <TableCell key="img"><img src={row.url}  style={{width:50, height: 50}}/></TableCell>
-                        <TableCell key="mint">{row.mint}</TableCell>
-                        <TableCell key="royalty">{row.data.sellerFeeBasisPoints/100}%</TableCell>
-                        <TableCell key="collection">{row.collection}</TableCell>
-                        <TableCell key="last">{row.price ? row.price + " sol" : "No history"}</TableCell>
-                        <TableCell key="creator">{row.updateAuthority}</TableCell>
+                        <TableCell id="name">{row.name}</TableCell>
+                        <TableCell id="img"><img src={row.url}  style={{width:50, height: 50}}/></TableCell>
+                        <TableCell id="mint">{row.mint}</TableCell>
+                        <TableCell id="royalty">{row.royalty}%</TableCell>
+                        <TableCell id="collection">{row.collection}</TableCell>
+                        <TableCell id="last">{row.price ? row.price + " sol" : "No history"}</TableCell>
+                        <TableCell id="creator">{row.updateAuthority}</TableCell>
                       </TableRow>
                     );
                   })}
