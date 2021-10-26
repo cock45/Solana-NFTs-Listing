@@ -6,9 +6,9 @@ import { textChangeRangeIsUnchanged } from "typescript";
 
 import { ConfirmedTransaction, ConfirmedTransactionMeta, Transaction } from '@solana/web3.js';
 import { SignalWifiOffSharp } from "@material-ui/icons";
-// import { resolve } from "dns";
+import { resolve } from "dns";
 import BLOCK_SIZE from "../../env";
-// import { connect } from "http2";
+import { connect } from "http2";
 
 const { TOKEN_PROGRAM_ID } = require("@solana/spl-token");
 
@@ -19,12 +19,13 @@ const GetAccountNFT = async (address: any) => {
   let response = await connection.getParsedTokenAccountsByOwner(publicKey, {
     programId: TOKEN_PROGRAM_ID,
   });
+  
   let mints = await Promise.all(
     response.value
-        .filter(
-          (accInfo) =>
-            accInfo.account.data.parsed.info.tokenAmount.uiAmount !== 0
-        )
+        // .filter(
+        //   (accInfo) =>
+        //     accInfo.account.data.parsed.info.tokenAmount.uiAmount !== 0
+        // )
         .map((accInfo) =>
           getMetadataAccount(accInfo.account.data.parsed.info.mint)
         )

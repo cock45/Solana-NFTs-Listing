@@ -75,7 +75,6 @@ export default function Transactions(props:any) {
   const sortHandler = (e:any) => {
     let id = e.target.getAttribute("id");
     let sortedRows = filterRows;
-    console.log(sortDirection);
     if(id === sortId) {
       setSortDirection(-1 * sortDirection);
       sortedRows.reverse();
@@ -173,7 +172,7 @@ export default function Transactions(props:any) {
         <TablePagination
           rowsPerPageOptions={[10, 25, 100]}
           component="div"
-          count={rows ? rows.length : 0}
+          count={filterRows ? filterRows.length : 0}
           rowsPerPage={rowsPerPage}
           page={page}
           onPageChange={handleChangePage}

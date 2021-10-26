@@ -108,7 +108,7 @@ function App() {
       const tx = await connection.getParsedConfirmedTransactions(signature[x]);
       txs = [...txs, ...tx];
     }
-
+    
     for(let metaId in metadata) {
       let metaTemp:any = [];
       const meta = metadata[metaId];
@@ -130,42 +130,54 @@ function App() {
       }
 
       let price = 0;
-      let thisPrice = 0;
-      let thisCount = 0;
       let maxCount = 0;
       let instruction:any = [];
       txs.map((tx:any) => {
-          let isThis = JSON.stringify(tx).indexOf(meta.mint);
-          if(isThis > -1) {
+        let isThis = JSON.stringify(tx).indexOf(meta.mint);
+        if(isThis > -1) {
+            let thisPrice = 0;
+            let thisCount = 0;
+
             if(tx.hasOwnProperty("meta")) {
               instruction = tx.meta.innerInstructions;
             } else {
               instruction = tx.innerInstructions;
             }
+
             let transLen = instruction.length;
-            if(transLen != 0) {
-              thisCount = instruction[transLen-1].index;
-              if(thisCount > maxCount) {
-                instruction[transLen-1].instructions.map((item:any) => {
-                  if(item.hasOwnProperty("parsed")) {
-                    if(item.parsed.info.hasOwnProperty("lamports")) {
-                      thisPrice += parseInt(item.parsed.info.lamports);
+            if(transLen > 0) {
+              thisCount = instruction[0].index;
+              if(thisCount >= maxCount) {
+                instruction.map((ists:any) => {
+                  let lamCount = 0;
+                  thisCount = ists.index;
+                  ists.instructions.map((item:any) => {
+                    if(item.hasOwnProperty("parsed")) {
+                      if(item.parsed.info.hasOwnProperty("lamports")) {
+                        if(item.parsed.info.lamports > 0) {
+                          lamCount++;
+                          thisPrice += parseInt(item.parsed.info.lamports);
+                        }
+                      }
                     }
+                  })
+                  if(lamCount > 1) {
+                    price = thisPrice / LAMPORTS_PER_SOL;
+                    maxCount = thisCount;
                   }
                 })
-                maxCount = thisCount;
-                price = thisPrice / LAMPORTS_PER_SOL;
               }
             }
           }
       })
-      metaTemp["price"] = parseFloat(price.toPrecision(3));
+      metaTemp["price"] = parseFloat(price.toPrecision(2));
+      // metaTemp["price"] = price;
 
       newData.push(metaTemp);
       const arr:any = [...newData];
       setData(arr);
     }
-
+   
     const newMetadata = newData.filter((value:any, index:Number, arr:any) => {
       return value.hasOwnProperty("url");
     });
