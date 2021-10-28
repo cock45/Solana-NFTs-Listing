@@ -17,15 +17,16 @@ import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 
 interface Column {
-  id: "name" | "url" | "mint" | "royalty" | "collection" | "price" | "updateAuthority";
+  id: "name" | "url" | "locate" | "mint" | "royalty" | "collection" | "price" | "updateAuthority";
   label: string;
   minWidth?: number;
   align?: "right";
   format?: (value: number) => string;
 }
 const columns: readonly Column[] = [
-  { id: "name", label: "Name", minWidth: 150 },
+  { id: "name", label: "Name", minWidth: 100 },
   { id: "url", label: "Image"},
+  { id: "locate", label: "Locate", minWidth: 100 },
   { id: "mint", label: "Mint", minWidth: 100 },
   {
     id: "royalty",
@@ -78,7 +79,7 @@ export default function Transactions(props:any) {
     if(id === sortId) {
       setSortDirection(-1 * sortDirection);
       sortedRows.reverse();
-    } else {
+    } else if(rows.length > 0) {
       setSortDirection(-1);
       if(typeof(rows[0][id]) === "number") {
         sortedRows.sort(function (a:any, b:any) {
@@ -86,6 +87,9 @@ export default function Transactions(props:any) {
         });
       } else {
         sortedRows.sort(function (a:any, b:any) {
+          if(a[id] === "" || b[id] === "") {
+            return 0;
+          }
           let nameA = a[id].toUpperCase(); 
           let nameB = b[id].toUpperCase(); 
           if (nameA < nameB) {
@@ -158,6 +162,7 @@ export default function Transactions(props:any) {
                       <TableRow hover role="checkbox" tabIndex={-1} key={index}>
                         <TableCell id="name">{row.name}</TableCell>
                         <TableCell id="img"><img src={row.url}  style={{width:50, height: 50}}/></TableCell>
+                        <TableCell id="locate">{row.locate}</TableCell>
                         <TableCell id="mint">{row.mint}</TableCell>
                         <TableCell id="royalty">{row.royalty}%</TableCell>
                         <TableCell id="collection">{row.collection}</TableCell>
