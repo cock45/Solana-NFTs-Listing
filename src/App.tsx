@@ -181,7 +181,7 @@ function App() {
                   }
                 }
               })
-              if (lamCount > 2) {
+              if (lamCount > 1) {
                 price = thisPrice / LAMPORTS_PER_SOL;
                 lastBlockNo = thisBlockNo;
               }
