@@ -138,7 +138,6 @@ export default function Transactions(props:any) {
                     style={{ minWidth: column.minWidth}}
                     onClick={sortHandler}
                     className="table-header"
-                    sx={{ textAlign: 'center' }}
                   >
                     {column.label}
                     <ArrowUpwardIcon 
