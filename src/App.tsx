@@ -1,5 +1,5 @@
 import React from "react";
-import { Typography, Box, Tabs, Tab } from "@material-ui/core";
+import { Typography, Box} from "@material-ui/core";
 import TextField from "@mui/material/TextField";
 import "./App.css";
 import Transactions from "./components/Transaction/Transactions";
@@ -9,7 +9,6 @@ import { clusterApiUrl, Connection, PublicKey, LAMPORTS_PER_SOL } from "@solana/
 import BLOCK_SIZE from "./env";
 
 function App() {
-  const [value, setValue] = React.useState(0);
   const [addrInputs, setAddrInputs] = React.useState("");
   const [data, setData] = React.useState([]);
   const [savedAddr, saveAddr] = React.useState("");
@@ -108,7 +107,7 @@ function App() {
         thisBlockNo = tx.slot;
         instruction = tx.meta.innerInstructions;
         
-        if(meta.uiAmount == 1) {
+        if(meta.uiAmount === 1) {
           current_owner = addr;
         }
 

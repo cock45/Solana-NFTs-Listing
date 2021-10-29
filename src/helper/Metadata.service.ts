@@ -55,10 +55,10 @@ const findProgramAddress = async (
   seeds: (Buffer | Uint8Array)[],
   programId: PublicKey
 ) => {
-  const key =
-    "pda-" +
-    seeds.reduce((agg, item) => agg + item.toString("hex"), "") +
-    programId.toString();
+  // const key =
+  //   "pda-" +
+  //   seeds.reduce((agg, item) => agg + item.toString("hex"), "") +
+  //   programId.toString();
 
   const result = await PublicKey.findProgramAddress(seeds, programId);
 

@@ -34,7 +34,9 @@ const GetAccountNFT = async (address: any) => {
       if(meta.mint == res.account.data.parsed.info.mint) {
         meta["uiAmount"] = res.account.data.parsed.info.tokenAmount.uiAmount;
       }
+      return 0;
     })
+    return meta;
   })
   
   return nftMetadata;
