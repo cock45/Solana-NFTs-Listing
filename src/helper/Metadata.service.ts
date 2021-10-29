@@ -200,7 +200,7 @@ export async function getMetadataAccount(
   )[0];
 }
 
-const METADATA_REPLACE = new RegExp("\u0000", "g");
+const METADATA_REPLACE = new RegExp("\x40", "g");
 export const decodeMetadata = (buffer: Buffer) => {
   try {
     const metadata = deserializeUnchecked(

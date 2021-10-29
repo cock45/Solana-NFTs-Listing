@@ -31,7 +31,7 @@ const GetAccountNFT = async (address: any) => {
 
   nftMetadata.map((meta:any) => {
     response.value.map((res:any) => {
-      if(meta.mint == res.account.data.parsed.info.mint) {
+      if(meta.mint === res.account.data.parsed.info.mint) {
         meta["uiAmount"] = res.account.data.parsed.info.tokenAmount.uiAmount;
       }
       return 0;
