@@ -1,0 +1,35 @@
+.icon {
+    margin-left: 5px;
+    position: absolute;
+}
+
+.icon.before {
+    display: none;
+}
+
+.icon.sort {
+    display: inline-block;
+}
+
+.main {
+    width: 90%;
+    overflow: hidden;
+    margin: auto;
+    margin-top: 30px;
+}
+
+.searchbar, table {
+    border: 1px solid #ddd;
+}
+
+.searchbar {
+    margin-bottom: 5px;
+}
+
+table {
+   max-height: 800px;
+}
+
+.table-header:hover {
+    cursor: pointer;
+}

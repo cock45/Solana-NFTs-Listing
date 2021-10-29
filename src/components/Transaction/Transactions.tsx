@@ -10,9 +10,7 @@ import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
 import SearchBar from "material-ui-search-bar";
 import "./Transaction.css";
-
-import Spinner from './components/spinner';
-import { height } from "@mui/system";
+import Spinner from '../spinner';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 
@@ -24,9 +22,9 @@ interface Column {
   format?: (value: number) => string;
 }
 const columns: readonly Column[] = [
-  { id: "name", label: "Name", minWidth: 100 },
+  { id: "name", label: "Name", minWidth: 150 },
   { id: "url", label: "Image"},
-  { id: "locate", label: "Locate", minWidth: 100 },
+  { id: "locate", label: "Locate", minWidth: 150 },
   { id: "mint", label: "Mint", minWidth: 100 },
   {
     id: "royalty",
@@ -122,13 +120,14 @@ export default function Transactions(props:any) {
   };
 
   return (
-      <Paper sx={{ width: "90%", overflow: "hidden", margin: "auto" }}>
+      <Paper className="main">
         <SearchBar
+          className="searchbar"
           value={searched}
           onChange={(searchVal) => search(searchVal)}
           onCancelSearch={() => cancelSearch()}
         />
-        <TableContainer sx={{ maxHeight: 640 }}>
+        <TableContainer className="table-container">
           <Table stickyHeader aria-label="sticky table">
             <TableHead>
               <TableRow>
@@ -138,14 +137,15 @@ export default function Transactions(props:any) {
                     align={column.align}
                     style={{ minWidth: column.minWidth}}
                     onClick={sortHandler}
-                    className="tableHeader"
+                    className="table-header"
+                    sx={{ textAlign: 'center' }}
                   >
                     {column.label}
                     <ArrowUpwardIcon 
-                      className={column.id == sortId && sortDirection == -1 ? "icon sort" : "icon before"} 
+                      className={column.id === sortId && sortDirection === -1 ? "icon sort" : "icon before"} 
                     />
                     <ArrowDownwardIcon 
-                      className={column.id == sortId && sortDirection == 1 ? "icon sort" : "icon before"} 
+                      className={column.id === sortId && sortDirection === 1 ? "icon sort" : "icon before"} 
                     />
                   </TableCell>
                 ))}
@@ -157,11 +157,10 @@ export default function Transactions(props:any) {
                 filterRows
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((row: any, index: number) => {
-                    let value:any;
                     return (
                       <TableRow hover role="checkbox" tabIndex={-1} key={index}>
                         <TableCell id="name">{row.name}</TableCell>
-                        <TableCell id="img"><img src={row.url}  style={{width:50, height: 50}}/></TableCell>
+                        <TableCell id="img"><img src={row.url} alt="img"  style={{width:50, height: 50}}/></TableCell>
                         <TableCell id="locate">{row.locate}</TableCell>
                         <TableCell id="mint">{row.mint}</TableCell>
                         <TableCell id="royalty">{row.royalty}%</TableCell>

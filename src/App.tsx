@@ -2,56 +2,17 @@ import React from "react";
 import { Typography, Box, Tabs, Tab } from "@material-ui/core";
 import TextField from "@mui/material/TextField";
 import "./App.css";
-import Transactions from "./Transactions";
-
+import Transactions from "./components/Transaction/Transactions";
 import GetAccountNFT from "./components/get-account-nfts/getAccountNFTs";
 import { trackPromise } from 'react-promise-tracker';
 import { clusterApiUrl, Connection, PublicKey, LAMPORTS_PER_SOL } from "@solana/web3.js";
-import { couldStartTrivia } from "typescript";
 import BLOCK_SIZE from "./env";
-
-interface TabPanelProps {
-  children?: React.ReactNode;
-  index: number;
-  value: number;
-}
-function TabPanel(props: TabPanelProps) {
-  const { children, value, index, ...other } = props;
-
-  return (
-    <div
-      role="tabpanel"
-      hidden={value !== index}
-      id={`simple-tabpanel-${index}`}
-      aria-labelledby={`simple-tab-${index}`}
-      {...other}
-    >
-      {value === index && (
-        <Box sx={{ p: 3 }}>
-          <Typography>{children}</Typography>
-        </Box>
-      )}
-    </div>
-  );
-}
-
-function a11yProps(index: number) {
-  return {
-    id: `simple-tab-${index}`,
-    "aria-controls": `simple-tabpanel-${index}`,
-  };
-}
 
 function App() {
   const [value, setValue] = React.useState(0);
   const [addrInputs, setAddrInputs] = React.useState("");
   const [data, setData] = React.useState([]);
-  const [metadata, setMetadata] = React.useState<any>();
   const [savedAddr, saveAddr] = React.useState("");
-
-  const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
-    setValue(newValue);
-  };
 
   const handleInputChange = (e: any) => {
     setAddrInputs(e.target.value);
@@ -121,10 +82,11 @@ function App() {
       signs.map((sign) => {
         signCount++;
         temp.push(sign.signature);
-        if (temp.length == BLOCK_SIZE || signCount == signLen) {
+        if (temp.length === BLOCK_SIZE || signCount === signLen) {
           signature.push(temp);
           temp = [];
         }
+        return 0;
       })
 
       for (let x in signature) {
@@ -153,7 +115,7 @@ function App() {
         if (instruction.length > 0) {
 
           // get Current Owner
-          if(current_owner != addr && thisBlockNo > last_owner_slot) {
+          if(current_owner !== addr && thisBlockNo > last_owner_slot) {
             instruction.map((ists: any) => {
               ists.instructions.map((item: any) => {
                 if (item.hasOwnProperty("parsed")) {
@@ -162,7 +124,9 @@ function App() {
                     last_owner_slot = thisBlockNo;
                   }
                 }
+                return 0;
               })
+              return 0;
             })
           }
           // get Current Owner End
@@ -180,20 +144,23 @@ function App() {
                     }
                   }
                 }
+                return lamCount;
               })
               if (lamCount > 1) {
                 price = thisPrice / LAMPORTS_PER_SOL;
                 lastBlockNo = thisBlockNo;
               }
+              return lastBlockNo;
             })
           }
           // get Price End
         }
+        return current_owner;
       })
       
       metaTemp["price"] = parseFloat(price.toPrecision(2));
       /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-      if (current_owner == addr) {
+      if (current_owner === addr) {
         if(meta.uiAmount > 0) {
           metaTemp["locate"] = "In your Wallet";
         } else {
@@ -214,7 +181,7 @@ function App() {
 
   const handleKeyDown = (e: any) => {
     if (e.key === 'Enter') {
-      if (addrInputs.length == 44 && addrInputs !== savedAddr) {
+      if (addrInputs.length === 44 && addrInputs !== savedAddr) {
         const addr = addrInputs;
         saveAddr(addr);
         setData([]);
@@ -233,31 +200,20 @@ function App() {
 
   return (
     <div className="App">
-      <Typography variant="h3">NFT details</Typography>
+      <Typography variant="h3">NFT Details</Typography>
       <Box>
         <TextField
           id="outlined-search"
           label="Search Address"
           type="search"
-          sx={{ marginLeft: '-100px', marginTop: '60px', minWidth: '500px' }}
+          sx={{ marginTop: '50px', minWidth: '600px' }}
           value={addrInputs}
           onChange={handleInputChange}
           onKeyDown={handleKeyDown}
         />
       </Box>
       <Box sx={{ width: "100%" }}>
-        <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-          <Tabs
-            value={value}
-            onChange={handleChange}
-            aria-label="basic tabs example"
-          >
-            <Tab label="NFT List" {...a11yProps(0)} />
-          </Tabs>
-        </Box>
-        <TabPanel value={value} index={0}>
-          <Transactions publicKey={addrInputs} rows={data} />
-        </TabPanel>
+        <Transactions publicKey={addrInputs} rows={data} />
       </Box>
     </div>
   );
