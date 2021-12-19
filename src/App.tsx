@@ -93,6 +93,7 @@ function App() {
         txs = [...txs, ...tx];
       }
       
+      console.log("Transactions => ", txs);
       /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
       ///////////////////////////////////////////////////   Price  ////////////////////////////////////////////////////////////////////////////////
       let price = 0;
@@ -102,6 +103,7 @@ function App() {
       let last_owner_slot = 0;
 
       let instruction: any = [];
+      
       txs.map((tx: any) => {
         let thisPrice = 0;
         thisBlockNo = tx.slot;
@@ -131,27 +133,27 @@ function App() {
           // get Current Owner End
 
           // get Price
-          if (thisBlockNo > lastBlockNo) {
-            instruction.map((ists: any) => {
-              let lamCount = 0;
-              ists.instructions.map((item: any) => {
-                if (item.hasOwnProperty("parsed")) {
-                  if (item.parsed.info.hasOwnProperty("lamports")) {
-                    if (item.parsed.info.lamports > 0) {
-                      lamCount++;
-                      thisPrice += parseInt(item.parsed.info.lamports);
-                    }
+          // if (thisBlockNo > lastBlockNo) {
+          instruction.map((ists: any) => {
+            let lamCount = 0;
+            ists.instructions.map((item: any) => {
+              if (item.hasOwnProperty("parsed")) {
+                if (item.parsed.info.hasOwnProperty("lamports")) {
+                  if (item.parsed.info.lamports > 0) {
+                    lamCount++;
+                    thisPrice += parseInt(item.parsed.info.lamports);
                   }
                 }
-                return lamCount;
-              })
-              if (lamCount > 1) {
-                price = thisPrice / LAMPORTS_PER_SOL;
-                lastBlockNo = thisBlockNo;
               }
-              return lastBlockNo;
+              return lamCount;
             })
-          }
+            if (lamCount > 1) {
+              price = thisPrice / LAMPORTS_PER_SOL > price ? thisPrice / LAMPORTS_PER_SOL : price;
+              lastBlockNo = thisBlockNo;
+            }
+            return lastBlockNo;
+          })
+          // }
           // get Price End
         }
         return current_owner;
